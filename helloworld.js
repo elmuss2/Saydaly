@@ -18,7 +18,11 @@ web.get('/', (req, res) => {
     client.connect()
         .then(() => client.query("SELECT * FROM messege"))
         .then(results => {
-            res.send(`<pre>${JSON.stringify(results.rows, null, 2)}</pre>`);
+            const rows = results.rows;
+            const tableRows = rows.map(row => {
+                return `<tr>${Object.values(row).map(value => `<td>${value}</td>`).join('')}</tr>`;
+            });
+            res.send(`<table>${tableRows.join('')}</table>`);
         })
         .catch(e => {
             console.log(e);
@@ -26,6 +30,7 @@ web.get('/', (req, res) => {
         })
         .finally(() => client.end());
 });
+
 
 web.listen(port, () => {
     console.log(`Server is running on port ${port}`);
