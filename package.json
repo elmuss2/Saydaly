@@ -1,0 +1,16 @@
+{
+  "name": "saydaly",
+  "version": "1.0.0",
+  "description": "",
+  "main": "helloworld.js",
+  "scripts": {
+    "test": "node ."
+  },
+  "author": "Kusai",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2",
+    "os": "^0.1.2",
+    "pg": "^8.11.3"
+  }
+}
