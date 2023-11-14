@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="stylesheet.css">
+    <title>Add Users</title>
+</head>
+<body>
+    <h1>Welcome to User Managment Website</h1>
+    <div class="add">
+        <h2>Add User</h2>
+         <form id="addForm">
+            <label for="name">First Name:</label>
+            <input type="text" id="Fname" name="name" required><br>
+
+            <label for="name">Last Name:</label>
+            <input type="text" id="Lname" name="name" required><br>
+
+
+            <button type="button" onclick="addUser()" id="submit">Submit to data</button>
+        </form>
+
+    </div>
+    
+    <div class="delete">
+        <h2>Delete User</h2>
+        <form id="deleteForm">
+            <label for="deleteId">Please Enter the name you Want to delete:</label> <br>
+
+            <label for="name">First Name:</label>
+            <input type="text" id="Fname" name="name" required><br>
+
+            <label for="name">Last Name:</label>
+             <input type="text" id="Lname" name="name" required><br>
+
+
+        <button type="button" onclick="deleteUser()" id="delUser">Delete from data</button>
+        </form>
+
+    </div>
+    
+    
+    <script>
+        async function addUser() {
+            const Fname = document.getElementById('Fname').value;
+            const Lname = document.getElementById('Lname').value;
+
+            try {
+                const response = await fetch('http://Kusais-MacBook-Pro.local:3000/adduser', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ Fname, Lname })
+                });
+
+                const result = await response.text();
+                alert(result);
+            } catch (error) {
+                console.error(error);
+                alert('Error while adding user');
+            }
+        }
+        async function deleteUser() {
+            const Fname = document.getElementById('Fname').value;
+            const Lname = document.getElementById('Lname').value;
+
+            try {
+                const response = await fetch('http://Kusais-MacBook-Pro.local:3000/deleteuser', {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ Fname, Lname })
+                });
+
+                const result = await response.text();
+                alert(result);
+            } catch (error) {
+                console.error(error);
+                alert('Error while deleting users');
+            }
+        }
+
+    </script>
+
+</body>
+</html>

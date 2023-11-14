@@ -1,0 +1,28 @@
+html{
+    background-color:aliceblue;
+}
+.add{
+    padding-left: 500px;
+    padding-top: 200px;
+}
+.delete{
+    padding-left: 500px;
+    padding-top: 100px;
+}
+h1{
+    text-align: center;
+}
+button{
+    background-color:lightblue;
+    border: none;
+    color: black;
+    padding: 5px 22px;
+    text-align: center;
+    text-decoration: none;
+    font-size: 16px;
+    top: 15px;
+    
+}
+button:hover {
+    cursor: pointer;
+  }
