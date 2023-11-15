@@ -29,10 +29,10 @@
             <label for="deleteId">Please Enter the name you Want to delete:</label> <br>
 
             <label for="name">First Name:</label>
-            <input type="text" id="Fname" name="name" required><br>
+            <input type="text" id="DFname" name="name" required><br>
 
             <label for="name">Last Name:</label>
-             <input type="text" id="Lname" name="name" required><br>
+             <input type="text" id="DLname" name="name" required><br>
 
 
         <button type="button" onclick="deleteUser()" id="delUser">Delete from data</button>
@@ -42,6 +42,10 @@
 
     <div id="subButton">
         <button type="button" onclick="DisplayUsers()" id="display"> Display Users</button>
+    </div>
+
+    <div class="stamp">
+        <p>Demo Website</p>
     </div>
     
     
@@ -67,8 +71,8 @@
             }
         }
         async function deleteUser() {
-            const Fname = document.getElementById('Fname').value;
-            const Lname = document.getElementById('Lname').value;
+            const Fname = document.getElementById('DFname').value;
+            const Lname = document.getElementById('DLname').value;
 
             try {
                 const response = await fetch('http://Kusais-MacBook-Pro.local:3000/deleteuser', {
@@ -78,6 +82,9 @@
                     },
                     body: JSON.stringify({ Fname, Lname })
                 });
+                if (!response.ok) {
+                         throw new Error(`Server returned ${response.status} ${response.statusText}`);
+                    }
 
                 const result = await response.text();
                 alert(result);

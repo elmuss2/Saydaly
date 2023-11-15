@@ -48,9 +48,10 @@ web.delete('/deleteuser', async (req, res)=>{
     });
     try{
         await client.connect();
-        console.log(' data:', { Fname, Lname });
-        const result = await client.query('DELETE FROM users WHERE TRIM(fname) = TRIM($1) AND TRIM(lname) = TRIM($2) RETURNING *',[Fname, Lname]);
-
+        //console.log(' data:', { Fname, Lname });
+        const result = 
+        await client.query('DELETE FROM users WHERE TRIM(LOWER(fname)) = TRIM(LOWER($1)) AND TRIM(LOWER(lname)) = TRIM(LOWER($2)) RETURNING *', 
+        [Fname, Lname]);
         if (result.rowCount > 0) {
             res.send("User Deleted");
         } else {
