@@ -26,22 +26,28 @@
     <div class="delete">
         <h2>Delete User</h2>
         <form id="deleteForm">
-            <label for="deleteId">Please Enter the name you Want to delete:</label> <br>
-
-            <label for="name">First Name:</label>
-            <input type="text" id="DFname" name="name" required><br>
-
-            <label for="name">Last Name:</label>
-             <input type="text" id="DLname" name="name" required><br>
+            <label for="deleteId">Please Enter the User ID you want to delete:</label> <br>
+            <input type="text" id="UserId" name="name" required><br>
 
 
-        <button type="button" onclick="deleteUser()" id="delUser">Delete from data</button>
+        <button type="button" onclick="deleteUser()" id="userId">Delete from data</button>
         </form>
 
     </div>
 
     <div id="subButton">
         <button type="button" onclick="DisplayUsers()" id="display"> Display Users</button>
+        <button onclick="refreshUsers()">Refresh Users</button>
+        <table id="usersTable">
+            <thead>
+              <tr>
+                <th>First Name</th>
+                <th>Last Name</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        
     </div>
 
     <div class="stamp">
@@ -70,27 +76,26 @@
                 alert('Error while adding user');
             }
         }
-        async function deleteUser() {
-            const Fname = document.getElementById('DFname').value;
-            const Lname = document.getElementById('DLname').value;
+        async function deleteUser(userId) {
+            console.log('Deleting user with ID:', userId);
 
-            try {
-                const response = await fetch('http://Kusais-MacBook-Pro.local:3000/deleteuser', {
-                    method: 'DELETE',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ Fname, Lname })
-                });
-                if (!response.ok) {
-                         throw new Error(`Server returned ${response.status} ${response.statusText}`);
+             try {
+                     const response = await fetch(`http://Kusais-MacBook-Pro.local:3000/users/${userId}`, {
+                     method: 'DELETE',
+                     headers: {
+                            'Content-Type': 'application/json'
                     }
+            });
 
-                const result = await response.text();
-                alert(result);
+            if (!response.ok) {
+                throw new Error(`Server returned ${response.status} ${response.statusText}`);
+            }
+
+            const result = await response.text();
+            alert(result);
             } catch (error) {
                 console.error(error);
-                alert('Error while deleting users');
+                alert('Error while deleting user');
             }
         }
         async function DisplayUsers(){
@@ -105,8 +110,14 @@
                 if(response.ok)
                 {
                     const result = await response.json();
-                    const displayString = result.map(obj => `<p>${obj.fname} ${obj.lname}</p>`).join('');
-                    document.getElementById('subButton').innerHTML = displayString;
+                    const table = document.querySelector('#usersTable tbody');
+                    result.forEach(user => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `<td>${user.fname}</td><td>${user.lname}</td><td><button value="delete" onClick="deleteUser(${user.id})"/>Delete</button>`;
+                        
+
+                        table.appendChild(row);
+                    });
                 }
                 else {
             
@@ -117,6 +128,11 @@
                 console.error(error);
                 alert('error while displaying data')
             }
+        }
+        async function refreshUsers()
+        {
+            DisplayUsers();
+
         }
     </script>
 

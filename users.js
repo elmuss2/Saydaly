@@ -37,8 +37,9 @@ web.post('/adduser',async (req, res) => {
 
 
 })
-web.delete('/deleteuser', async (req, res)=>{
-    const {Fname, Lname} = req.body;
+web.delete('/users/:userId', async (req, res)=>{
+    const userId = req.params.userId;
+
     const client = new Client({
         user: "postgres",
         password: "gKstv5-h3b",
@@ -46,24 +47,20 @@ web.delete('/deleteuser', async (req, res)=>{
         port: 5432,
         database: "test"
     });
-    try{
+
+    try {
         await client.connect();
-        //console.log(' data:', { Fname, Lname });
-        const result = 
-        await client.query('DELETE FROM users WHERE TRIM(LOWER(fname)) = TRIM(LOWER($1)) AND TRIM(LOWER(lname)) = TRIM(LOWER($2)) RETURNING *', 
-        [Fname, Lname]);
+        const result = await client.query('DELETE FROM users WHERE id = $1 RETURNING *', [userId]);
+
         if (result.rowCount > 0) {
             res.send("User Deleted");
         } else {
             res.status(404).send("User not found");
         }
-    }
-    catch(error)
-    {
+    } catch (error) {
         console.error(error);
-        res.status(500).send('error while deleting data' + error.message);
-    }
-    finally{
+        res.status(500).send('Error while deleting data: ' + error.message);
+    } finally {
         await client.end();
     }
 })
@@ -77,8 +74,8 @@ web.get('/displayusers', async (req,res)=>{
     });
     try{
         await client.connect();
-        const result = await client.query('SELECT * FROM users');
-        res.send(result.rows);
+        const {rows} = await client.query('SELECT * FROM users');
+        res.json(rows);
     }
     catch(error){
         console.error(error);
