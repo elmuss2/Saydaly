@@ -30,7 +30,7 @@
             <input type="text" id="UserId" name="name" required><br>
 
 
-        <button type="button" onclick="deleteUser()" id="userId">Delete from data</button>
+        <button type="button" onclick="deleteUser(userId)" id="userId">Delete from data</button>
         </form>
 
     </div>
@@ -43,6 +43,7 @@
               <tr>
                 <th>First Name</th>
                 <th>Last Name</th>
+                <th>UserId</th>
               </tr>
             </thead>
             <tbody></tbody>
@@ -71,6 +72,7 @@
 
                 const result = await response.text();
                 alert(result);
+                refreshUsers();
             } catch (error) {
                 console.error(error);
                 alert('Error while adding user');
@@ -93,6 +95,7 @@
 
             const result = await response.text();
             alert(result);
+            refreshUsers();
             } catch (error) {
                 console.error(error);
                 alert('Error while deleting user');
@@ -111,9 +114,10 @@
                 {
                     const result = await response.json();
                     const table = document.querySelector('#usersTable tbody');
+                    table.innerHTML = '';
                     result.forEach(user => {
                         const row = document.createElement('tr');
-                        row.innerHTML = `<td>${user.fname}</td><td>${user.lname}</td><td><button value="delete" onClick="deleteUser(${user.id})"/>Delete</button>`;
+                        row.innerHTML = `<td>${user.fname}</td><td>${user.lname}</td><td>${user.id}</td><td><button value="delete" onClick="deleteUser(${user.id})"/>Delete</button>`;
                         
 
                         table.appendChild(row);
