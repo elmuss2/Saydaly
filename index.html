@@ -30,7 +30,7 @@
             <input type="text" id="UserId" name="name" required><br>
 
 
-        <button type="button" onclick="deleteUser(userId)" id="userId">Delete from data</button>
+        <button type="button" onclick="deleteUser2()">Delete from data</button>
         </form>
 
     </div>
@@ -78,6 +78,11 @@
                 alert('Error while adding user');
             }
         }
+        async function deleteUser2() {
+            const userId = document.getElementById('UserId').value;
+            deleteUser(userId);
+        }
+
         async function deleteUser(userId) {
             console.log('Deleting user with ID:', userId);
 

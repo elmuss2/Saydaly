@@ -39,6 +39,7 @@ web.post('/adduser',async (req, res) => {
 })
 web.delete('/users/:userId', async (req, res)=>{
     const userId = req.params.userId;
+    console.log(userId);
 
     const client = new Client({
         user: "postgres",
