@@ -1,9 +1,18 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const {Pool} = require('pg');
 const app = express();
+const pool = new Pool({
+        user: "postgres",
+        password: "gKstv5-h3b",
+        host: 'Kusais-MacBook-Pro.local',
+        port: 5432,
+        database: "test"
+});
 const port = 3000;
-app.set('view engine', 'ejs');
+app.set('view engine', 'pug');
 app.use(bodyParser.urlencoded({ extended: true }));
+app.set('views', __dirname + '/views');
 
 
 
@@ -16,15 +25,61 @@ app.use(express.static('public', {
 }));
 
 app.get('/', (req, res) => {
-  res.render('index.ejs');
+  res.render('web.pug');
 });
 
-app.post('/submit', (req, res) => {
-    
-    res.render('index.ejs', {
-        First: req.body.fname,
-        Last: req.body.lname
-    });
+app.post('/submit', async (req, res) => {
+    try{
+        const {fname, lname} = req.body;
+        const query = 'INSERT INTO users (fname, lname) VALUES ($1, $2) RETURNING * ';
+        const values = [fname,lname];
+        const newUser = await pool.query(query,values);
+        const alertMessage = 'Used Added!';
+        res.render('web.pug',{
+            alertMessage
+        });
+    }
+    catch(error){
+        console.error(error);
+        const alertMessage = 'Fail to add user to database';
+        
+        res.status(500).render('web.pug',{
+            alertMessage
+        });
+    }
+
+});
+app.post('/delete', async (req, res) => {
+    try{
+        const userId = req.body.id;
+        const query = 'DELETE FROM users WHERE id = $1 RETURNING *';
+        const values = [userId];
+        const action = await pool.query(query,values);
+        const alertMessage = 'Used Deleted!';
+        res.render('web.pug',{
+            alertMessage
+        });
+    }
+    catch(error){
+        console.error(error);
+        const alertMessage = 'Fail to delete user from database';
+        
+        res.status(500).render('web.pug',{
+            alertMessage
+        });
+    }
+});
+
+app.get('/displayUsers', async (req, res) => {
+    try {
+        const query = 'SELECT * FROM users'; // Change 'users' to your table name
+        const users = await pool.query(query);
+        res.render('displayUsers.pug', { users: users.rows });
+    } catch (error) {
+        console.error(error);
+        const alertMessage = 'Failed to fetch users from the database.';
+        res.status(500).render('web.pug', { alertMessage });
+    }
 });
 
 app.listen(port, () => {

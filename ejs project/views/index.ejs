@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="stylesheet.css">
 </head>
 <body>
-    <form action="/submit" method="POST">
+    <form action="/submit" method="POST" id="add">
         <h1>Add User</h1>
         <div class="mb-3">
             <label for="formGroupExampleInput" class="form-label">First Name</label>
@@ -19,6 +19,19 @@
             <input type="text" class="form-control" id="formGroupExampleInput2" placeholder="Your Last Name" name="lname">
           </div>
         <input type="submit" value="Submit" id="button">
+    </form>
+    <% if (typeof alertMessage !== 'undefined' && alertMessage !== null) { %>
+        <script>
+            alert('<%= alertMessage %>');
+        </script>
+    <% } %>
+    <form action="/delete" method="POST" id="delete">
+        <h1>Delete User</h1>
+        <div class="mb-3">
+            <label for="formGroupExampleInput" class="form-label">User's ID</label>
+            <input type="text" class="form-control" id="formGroupExampleInput" placeholder="The Id of the user you would like to delete" name="id">
+          </div>
+          <input type="submit" value="Delete" id="button">
     </form>
 </body>
 </html>

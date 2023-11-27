@@ -2,8 +2,12 @@ h1{
     text-align: center;
 
 }
-form{
+#add{
     padding: 200px;
+}
+#delete{
+    padding: 200px;
+    margin-top: -290px; 
 }
 #button{
     border-radius: 50px;
@@ -14,4 +18,10 @@ form{
 }
 #button:hover{
     background-color:aquamarine;
+}
+#display{
+    border-radius: 50px;
+    display: flex;
+    justify-content: center;
+    margin-left: 650px;
 }
