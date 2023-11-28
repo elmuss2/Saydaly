@@ -14,8 +14,6 @@ app.set('view engine', 'pug');
 app.use(bodyParser.urlencoded({ extended: true }));
 app.set('views', __dirname + '/views');
 
-
-
 app.use(express.static('public', {
     setHeaders: (res, path) => {
         if (path.endsWith('.css')) {
@@ -51,14 +49,13 @@ app.post('/submit', async (req, res) => {
 });
 app.post('/delete', async (req, res) => {
     try{
-        const userId = req.body.id;
+        const userId = req.body.userId;
+        console.log(req.body);
         const query = 'DELETE FROM users WHERE id = $1 RETURNING *';
         const values = [userId];
         const action = await pool.query(query,values);
         const alertMessage = 'Used Deleted!';
-        res.render('web.pug',{
-            alertMessage
-        });
+        res.redirect('/displayUsers');
     }
     catch(error){
         console.error(error);
@@ -69,12 +66,11 @@ app.post('/delete', async (req, res) => {
         });
     }
 });
-
 app.get('/displayUsers', async (req, res) => {
     try {
-        const query = 'SELECT * FROM users'; // Change 'users' to your table name
+        const query = 'SELECT * FROM users'; 
         const users = await pool.query(query);
-        res.render('displayUsers.pug', { users: users.rows });
+        res.render('web.pug', { users: users.rows });
     } catch (error) {
         console.error(error);
         const alertMessage = 'Failed to fetch users from the database.';

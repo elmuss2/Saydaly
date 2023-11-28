@@ -21,3 +21,7 @@ html(lang="en")
             td= user.id
             td= user.fname
             td= user.lname
+            td
+                form(action="/delete", method="POST") 
+                    input(type="hidden", name="userId", value=user.id) 
+                    button(type="submit") 
