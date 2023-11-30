@@ -48,14 +48,13 @@ wrapper {
 }
 .table {
     border-collapse: collapse;
-    width: 80%; /* Adjust the width of the table as needed */
-    border: 1px solid #ddd; /* Example border styling */
+    width: 80%; 
+    border: 1px solid #ddd; 
   }
   
-  /* Style for table cells */
   .table th,
   .table td {
-    border: 1px solid #ddd; /* Example border styling */
+    border: 1px solid #ddd; 
     padding: 8px;
     text-align: left;
   }

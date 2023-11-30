@@ -50,7 +50,6 @@ app.post('/submit', async (req, res) => {
 app.post('/delete', async (req, res) => {
     try{
         const userId = req.body.userId;
-        console.log(req.body);
         const query = 'DELETE FROM users WHERE id = $1 RETURNING *';
         const values = [userId];
         const action = await pool.query(query,values);
