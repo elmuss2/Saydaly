@@ -65,6 +65,33 @@ app.post('/delete', async (req, res) => {
         });
     }
 });
+app.post('/edit', async(req,res)=>{
+    try{
+            const userId = req.body.userId
+            res.render ('editUser.pug',{ userId });
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).send('Error redirecting to edit');
+      }
+});
+app.post('/updateUser', async (req, res) => {
+    try {
+      const userId = req.body.userId;
+      const newFirstName = req.body.fname;
+      const newLastName = req.body.lname;
+  
+      const query = 'UPDATE users SET fname = $1, lname = $2 WHERE id = $3';
+      const values = [newFirstName, newLastName, userId];
+  
+      await pool.query(query, values);
+  
+      res.redirect('/displayUsers'); 
+    } catch (error) {
+      console.error(error);
+      res.status(500).send('Error updating user');
+    }
+  });
 app.get('/displayUsers', async (req, res) => {
     try {
         const query = 'SELECT * FROM users'; 
