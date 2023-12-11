@@ -11,6 +11,11 @@ wrapper {
     height: 100px; 
 
   }
+  .Pass, .Email{
+    float: left;
+    width: 350px; 
+    height: 150px; 
+  }
 
   html, body {
     background-color: aliceblue;
@@ -29,6 +34,9 @@ wrapper {
 }
 #button:hover{
     background-color:green;
+}
+#login{
+    margin-right: 50px;
 }
 #Display{
     display: inline-block;

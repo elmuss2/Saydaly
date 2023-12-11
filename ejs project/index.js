@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const {Pool} = require('pg');
 const app = express();
+const {check, validationResult} = require('express-validator');
 const pool = new Pool({
         user: "postgres",
         password: "gKstv5-h3b",
@@ -9,10 +10,24 @@ const pool = new Pool({
         port: 5432,
         database: "test"
 });
+
 const port = 3000;
 app.set('view engine', 'pug');
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({ extended: false }));
 app.set('views', __dirname + '/views');
+const session = require('express-session');
+const cookieParser = require('cookie-parser');
+app.use(cookieParser());
+
+app.use(session({
+    secret: 'gkstv5h3b', 
+    resave: false,
+    saveUninitialized: true,
+    cookie: {
+        secure: true, 
+        maxAge: 24 * 60 * 60 * 1000 
+    }
+}));
 
 app.use(express.static('public', {
     setHeaders: (res, path) => {
@@ -23,7 +38,77 @@ app.use(express.static('public', {
 }));
 
 app.get('/', (req, res) => {
-  res.render('web.pug');
+  res.render('login.pug');
+});
+
+app.get('/login', (req, res) => {
+    res.render('login.pug');
+  });
+  
+app.post('/login', [
+    check('email', 'email is not valid').isEmail().normalizeEmail(),
+    check('pwd', 'password must be 8 characters long').exists().isLength({ min: 8 })
+], async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.render('login.pug', { errors: errors.array() });
+    }
+
+    const { email, pwd } = req.body; 
+    try {
+        const query = 'SELECT * FROM accounts WHERE email = $1 AND password = $2';
+        const values = [email, pwd]; 
+
+        const user = await pool.query(query, values);
+
+        if (user.rows.length > 0) {
+            req.session.user = { email: user.rows[0].email, userId: user.rows[0].id };
+            const alertMessage ='Login successful';
+            return res.render('web.pug', {
+                alertMessage
+            });
+        } else {
+            return res.send('Invalid email or password');
+        }
+    } catch (error) {
+        console.error(error);
+        return res.status(500).send('Error checking credentials');
+    }
+});
+app.get('/signup', (req, res) => {
+    res.render('signup.pug'); 
+});
+
+app.post('/signup', [
+    check('email', 'email is not valid').isEmail().normalizeEmail(),
+    check('pwd', 'password must be 8 characters long').exists().isLength({ min: 8 })
+], async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.render('signup.pug', { errors: errors.array() });
+    }
+
+    const { email, password } = req.body;
+
+    try {
+        const query = 'INSERT INTO accounts (email, password) VALUES ($1, $2)';
+        const values = [email, password];
+        await pool.query(query, values);
+        const alertMessage = 'Signup successful';
+        return res.render('login.pug', { alertMessage });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).send('Error creating user');
+    }
+});
+
+app.get('/dashboard', (req, res) => {
+    if (req.session.user) {
+        const userEmail = req.session.user.email;
+        res.render('dashboard', { userEmail }); 
+    } else {
+        res.redirect('/login'); 
+    }
 });
 
 app.post('/submit', async (req, res) => {
@@ -68,7 +153,7 @@ app.post('/delete', async (req, res) => {
 app.post('/edit', async(req,res)=>{
     try{
             const userId = req.body.userId
-            res.render ('editUser.pug',{ userId });
+            res.render('editUser.pug',{ userId });
     }
     catch (error) {
         console.error(error);
