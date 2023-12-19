@@ -4,9 +4,9 @@ const {Pool} = require('pg');
 const app = express();
 const {check, validationResult} = require('express-validator');
 const pool = new Pool({
-        user: "postgres",
+        user: "kusaielmusraty",
         password: "gKstv5-h3b",
-        host: 'Kusais-MacBook-Pro.local',
+        host: 'localhost',
         port: 5432,
         database: "test"
 });
@@ -17,14 +17,25 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.set('views', __dirname + '/views');
 const session = require('express-session');
 const cookieParser = require('cookie-parser');
+const pgSession = require('connect-pg-simple')(session);
 app.use(cookieParser());
 
 app.use(session({
+    store: new pgSession({
+        pool,
+        tableName: 'sessions',
+        pgPromise: pool,
+        pgPool: pool,
+        pgp: pool, 
+        primaryKey: 'id', 
+        sessionId: 'sid', 
+        expire: 'expire',
+        sessionData: 'sess'
+    }),
     secret: 'gkstv5h3b', 
     resave: false,
     saveUninitialized: true,
     cookie: {
-        secure: true, 
         maxAge: 24 * 60 * 60 * 1000 
     }
 }));
@@ -62,7 +73,8 @@ app.post('/login', [
         const user = await pool.query(query, values);
 
         if (user.rows.length > 0) {
-            req.session.user = { email: user.rows[0].email, userId: user.rows[0].id };
+            const userId = user.rows[0].id;
+            req.session.user = { userId };
             const alertMessage ='Login successful';
             return res.render('web.pug', {
                 alertMessage
@@ -88,26 +100,17 @@ app.post('/signup', [
         return res.render('signup.pug', { errors: errors.array() });
     }
 
-    const { email, password } = req.body;
+    const { email, pwd } = req.body;
 
     try {
         const query = 'INSERT INTO accounts (email, password) VALUES ($1, $2)';
-        const values = [email, password];
+        const values = [email, pwd];
         await pool.query(query, values);
         const alertMessage = 'Signup successful';
         return res.render('login.pug', { alertMessage });
     } catch (error) {
         console.error(error);
         return res.status(500).send('Error creating user');
-    }
-});
-
-app.get('/dashboard', (req, res) => {
-    if (req.session.user) {
-        const userEmail = req.session.user.email;
-        res.render('dashboard', { userEmail }); 
-    } else {
-        res.redirect('/login'); 
     }
 });
 

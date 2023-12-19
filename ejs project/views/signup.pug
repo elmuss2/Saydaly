@@ -10,10 +10,10 @@ body
     form(action="/signup", method="POST")
         .wrapper
             .Email
-                label(for="email") Email Address 
+                label(for="email") New Email Address 
                 input(type="text", name="email")
             .Pass
-                label(for="Password") Password
+                label(for="Password") New Password
                 input(type="password", name="pwd")
             input(type="submit", value="Sign Up", id="signup")
             if typeof(alertMessage) !== 'undefined' && alertMessage !== null
