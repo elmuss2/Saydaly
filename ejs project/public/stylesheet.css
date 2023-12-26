@@ -51,8 +51,24 @@ wrapper {
     bottom: 200px;
 
 }
+#logout{
+  display: inline-block;
+    padding: 10px 20px;
+    border:1px solid black;
+    border-radius: 50px;
+    text-decoration: none;
+    color: black;
+    background-color: whitesmoke;
+    display: block;
+    position: absolute;
+    bottom: 100px;
+
+}
 #Display:hover{
     background-color:green;
+}
+#logout:hover{
+  background-color:green;
 }
 .table {
     border-collapse: collapse;

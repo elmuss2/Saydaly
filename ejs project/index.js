@@ -18,22 +18,27 @@ app.set('views', __dirname + '/views');
 const session = require('express-session');
 const cookieParser = require('cookie-parser');
 const pgSession = require('connect-pg-simple')(session);
+const randomatic = require('randomatic');
+const secretKey = 'gkstv5h3b';
+
+const generateSessionId = () => randomatic('Aa0', 64);
+
 app.use(cookieParser());
 
 app.use(session({
     store: new pgSession({
-        pool,
+        pool: pool,
         tableName: 'sessions',
-        pgPromise: pool,
-        pgPool: pool,
-        pgp: pool, 
         primaryKey: 'id', 
         sessionId: 'sid', 
         expire: 'expire',
-        sessionData: 'sess'
+        sessionData: 'sess',
+        encrypt: true, 
+        secret: secretKey,
+        generateId: generateSessionId,
     }),
-    secret: 'gkstv5h3b', 
-    resave: false,
+    secret: secretKey, 
+    resave: true,
     saveUninitialized: true,
     cookie: {
         maxAge: 24 * 60 * 60 * 1000 
@@ -74,7 +79,8 @@ app.post('/login', [
 
         if (user.rows.length > 0) {
             const userId = user.rows[0].id;
-            req.session.user = { userId };
+            req.session.userId = userId;
+
             const alertMessage ='Login successful';
             return res.render('web.pug', {
                 alertMessage
@@ -87,6 +93,14 @@ app.post('/login', [
         return res.status(500).send('Error checking credentials');
     }
 });
+app.get('/logout', (req, res) => {
+    req.session.destroy((err) => {
+      if (err) {
+        console.error('Error destroying session:', err);
+      }
+      res.redirect('/login'); 
+    });
+  });
 app.get('/signup', (req, res) => {
     res.render('signup.pug'); 
 });

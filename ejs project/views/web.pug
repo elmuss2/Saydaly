@@ -17,13 +17,14 @@ html(lang="en")
           label(for="lastName") Last Name
           input(type="text", name="lname")
         input(type="submit", value="Add User", id="button")
-      
         if typeof(alertMessage) !== 'undefined' && alertMessage !== null
           script.
             alert("#{alertMessage}")
 
+
     
     a.button(href="/displayUsers" id="Display") Display Users
+    a.button(href="/logout" id="logout") Logout
 
     if (users && users.length > 0)
       table.table
